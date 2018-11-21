@@ -1,0 +1,20 @@
+@startuml
+
+class Video {
+- ビデオタイトル: str
+- ビデオの収録時間: int
+}
+
+interface video {
++ ビデオタイトル: str
+}
+
+abstract calc {
+- 日数: int
++ 貸出料金(): int
+}
+
+Video <|-- video
+Video --> calc
+
+@enduml
