@@ -1,0 +1,39 @@
+@startuml
+class CD {
++ CDタイトル: str
+
++ 料金を計算する(): int
+}
+
+class JapaneseCD {
++ 料金を計算する(): int
+}
+
+class ImportCD {
++ 料金を計算する(): int
+}
+
+class Video {
++ ビデオタイトル: str
+
++ 料金を計算する(): int
+}
+
+class DVD {
++ DVDのタイトル: str
+
++ 料金を計算する(): int
+}
+
+interface calc {
++ 日数: int
++ 貸出料金(): int
+}
+
+calc <|-- CD
+CD <|-- JapaneseCD
+CD <|-- ImportCD
+calc <|-- Video
+calc <|-- DVD
+
+@enduml
