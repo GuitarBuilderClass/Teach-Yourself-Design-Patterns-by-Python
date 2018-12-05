@@ -1,0 +1,29 @@
+@startuml
+interface "電話操作" as Telephone {
+    + プッシュボタンを押す(連絡先電話番号)
+    + 回線を繋ぐ()
+    + 回線を切断する()
+}
+
+class "通信者" as User
+
+class "固定電話" as Homephone {
+    - 機種
+    + プッシュボタンを押す(連絡先電話番号)
+    + 回線を繋ぐ()
+    + 回線を切断する()
+}
+
+class "携帯電話" as Cellphone  {
+     - 機種
+     + プッシュボタンを押す(連絡先番号)
+     + 回線を繋ぐ()
+     + 回線を切断する()
+     + カメラで写真を撮る()
+}
+
+User .> Telephone: <<use>>
+Telephone <|.. Homephone
+Telephone <|.. Cellphone
+
+@enduml
