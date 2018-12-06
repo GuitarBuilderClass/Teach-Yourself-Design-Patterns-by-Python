@@ -1,0 +1,19 @@
+@startuml
+participant PM
+participant SE
+participant PG
+
+activate PM
+  PM -> SE: "1: 報告書の作成を依頼する()"
+    activate SE
+      SE -> PG: "2: 調査を依頼する()"
+      activate PG
+        PG <- PG: "3: 調査を行う()"
+        SE <-- PG: "4: 調査結果"
+      deactivate PG
+    SE -> SE: "5: 報告書を作成する()"
+  PM <-- SE: "6: 報告書"
+  deactivate SE
+deactivate PM
+
+@enduml
