@@ -1,39 +1,36 @@
 @startuml
-class CD {
-+ CDタイトル: str
 
-+ 料金を計算する(): int
-}
-
-class JapaneseCD {
-+ 料金を計算する(): int
-}
-
-class ImportCD {
-+ 料金を計算する(): int
+interface Item {
+- title: str
+- minutes: int
++ calc_fee(days: int) -> int
 }
 
 class Video {
-+ ビデオタイトル: str
-
-+ 料金を計算する(): int
+calc_fee(days: int) -> int
 }
 
 class DVD {
-+ DVDのタイトル: str
-
-+ 料金を計算する(): int
+calc_fee(days: int) -> int
 }
 
-interface calc {
-+ 日数: int
-+ 貸出料金(): int
+class CD {
++ calc_fee(days: int) -> int
 }
 
-calc <|-- CD
+class JapaneseCD {
++ calc_fee(days: int) -> int
+}
+
+class ImportCD {
+calc_fee(days: int) -> int
+}
+
+Item <|-- CD
+Item <|-- Video
+Item <|-- DVD
 CD <|-- JapaneseCD
 CD <|-- ImportCD
-calc <|-- Video
-calc <|-- DVD
+
 
 @enduml
