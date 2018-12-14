@@ -95,8 +95,8 @@ class Main:
     receptionistB.can_reserve(12, "森崎")
 
     print()
-    obj: CourtScheduler = CourtScheduler()
-    receptionistC = Receptionist("C", obj)
+    goal_post: CourtScheduler = CourtScheduler()
+    receptionistC = Receptionist("C", goal_post)
     receptionistC.can_reserve(12, "森崎")
 
 
