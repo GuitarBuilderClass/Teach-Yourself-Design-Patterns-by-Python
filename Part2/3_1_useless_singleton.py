@@ -47,14 +47,15 @@ class Receptionist:
     START: int = 9
     END: int = 20
 
-    def __init__(self, name: str) -> None:
+    def __init__(self, name: str, court_scheduler: CourtScheduler) -> None:
         """
         予約受付係の設定をする
         Args:
             name (str): 予約受付係の名前
+            court_scheduler (CourtScheduler): 予約管理システムのインスタンス
         """
         self.name: str = name
-        self.court_scheduler = CourtScheduler
+        self.court_scheduler = court_scheduler
         self.hours: int = self.court_scheduler.HOURS
 
     def can_reserve(self, hour: int, person: str) -> None:
@@ -75,15 +76,16 @@ class Receptionist:
                 message = f"{self.name}が{hour}時に{person}君の予約を入れました"
             else:
                 person2 = self.court_scheduler.booking[hour]
-                message = f"{hour}時は既に{person2}君の予約が入っております\nあぁっと{person}君ふっ飛ばされた!!"
+                message = f"{hour}時は既に{person2}君の予約が入っております\n"
+                message += f"あぁっと{person}君ふっ飛ばされた!!"
         print(message)
 
 
 class Main:
     """メイン処理クラス"""
     court_scheduler: CourtScheduler = CourtScheduler()
-    receptionistA = Receptionist("A")
-    receptionistB = Receptionist("B")
+    receptionistA = Receptionist("A", court_scheduler)
+    receptionistB = Receptionist("B", court_scheduler)
 
     receptionistA.can_reserve(9, "日向")
     receptionistA.can_reserve(12, "マーガス")
@@ -91,6 +93,11 @@ class Main:
     receptionistB.can_reserve(10, "大空")
     receptionistB.can_reserve(11, "岬")
     receptionistB.can_reserve(12, "森崎")
+
+    print()
+    obj: CourtScheduler = CourtScheduler()
+    receptionistC = Receptionist("C", obj)
+    receptionistC.can_reserve(12, "森崎")
 
 
 if __name__ == '__main__':
