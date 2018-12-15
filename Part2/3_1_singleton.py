@@ -10,10 +10,8 @@ class CourtScheduler:
     def __new__(cls, *args, **kwargs):
         if not cls._has_instance:
             cls._has_instance = super(
-                CourtScheduler, cls).__new__(cls, *args, **kwargs)
-            cls.booking: list = list()
-            for __ in range(HOURS):
-                cls.booking += " "
+                    CourtScheduler, cls).__new__(cls, *args, **kwargs)
+            cls.__initialize()
         return cls._has_instance
 
     @classmethod
@@ -24,7 +22,14 @@ class CourtScheduler:
             hour (int): 予約希望時間
             person (str): 予約希望者
         """
-        cls.booking[hour] = person
+        cls.booking[hour]: object = person
+
+    @classmethod
+    def __initialize(cls):
+        cls.booking = list()
+        for __ in range(HOURS):
+            cls.booking += " "
+        return cls.booking
 
 
 class Receptionist:
@@ -48,7 +53,6 @@ class Receptionist:
         Args:
             hour (int): 予約者の予約希望時間
             person (str): 予約希望者
-
         """
         court_scheduler = CourtScheduler()
         if (hour <= 0) or (hour > HOURS - 1):
@@ -58,11 +62,11 @@ class Receptionist:
         else:
             if court_scheduler.booking[hour] == " ":
                 court_scheduler.schedule(hour, person)
-                message = f"{self.name}が{hour}時に{person}君の予約を入れました"
+                message = f"{self.name}が{hour}時に{person}くんの予約を入れました"
             else:
                 person2 = court_scheduler.booking[hour]
-                message = f"{hour}時は既に{person2}君の予約が入っております\n"
-                message += f"あぁっと{person}君ふっ飛ばされた!!"
+                message = f"{hour}時は既に{person2}くんの予約が入っております\n"
+                message += f"あぁっと{person}くんふっ飛ばされた!!"
         print(message)
 
 

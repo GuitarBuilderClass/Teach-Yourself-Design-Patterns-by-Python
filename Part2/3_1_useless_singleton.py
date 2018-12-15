@@ -27,7 +27,7 @@ class CourtScheduler:
             hour (int): 予約希望時間
             person (str): 予約希望者
         """
-        self.booking[hour] = person
+        self.booking[hour]: object = person
 
 
 class Receptionist:
@@ -37,15 +37,14 @@ class Receptionist:
     START: int = 9
     END: int = 20
 
-    def __init__(self, name: str, court_scheduler: object) -> None:
+    def __init__(self, name: str, scheduler: CourtScheduler) -> None:
         """
         予約受付係の設定をする
         Args:
             name (str): 予約受付係の名前
-            court_scheduler (object): 予約管理システムのインスタンス
         """
         self.name: str = name
-        self.court_scheduler = court_scheduler
+        self.court_scheduler: CourtScheduler = scheduler
         self.hours: int = HOURS
 
     def make_reservation(self, hour: int, person: str) -> None:
@@ -62,19 +61,19 @@ class Receptionist:
         else:
             if self.court_scheduler.booking[hour] == " ":
                 self.court_scheduler.schedule(hour, person)
-                message = f"{self.name}が{hour}時に{person}君の予約を入れました"
+                message = f"{self.name}が{hour}時に{person}くんの予約を入れました"
             else:
                 person2 = self.court_scheduler.booking[hour]
-                message = f"{hour}時は既に{person2}君の予約が入っております\n"
-                message += f"あぁっと{person}君ふっ飛ばされた!!"
+                message = f"{hour}時は既に{person2}くんの予約が入っております\n"
+                message += f"あぁっと{person}くんふっ飛ばされた!!"
         print(message)
 
 
 class Main:
     """メイン処理クラス"""
-    court_scheduler: object = CourtScheduler()
-    receptionistA: object = Receptionist("A", court_scheduler)
-    receptionistB: object = Receptionist("B", court_scheduler)
+    court_scheduler: CourtScheduler = CourtScheduler()
+    receptionistA: Receptionist = Receptionist("A", court_scheduler)
+    receptionistB: Receptionist = Receptionist("B", court_scheduler)
 
     receptionistA.make_reservation(9, "日向")
     receptionistA.make_reservation(12, "マーガス")
@@ -84,8 +83,8 @@ class Main:
     receptionistB.make_reservation(12, "森崎")
 
     print()
-    goal_post: object = CourtScheduler()
-    receptionistC:object = Receptionist("ゴールポスト", goal_post)
+    goal_post: CourtScheduler = CourtScheduler()
+    receptionistC = Receptionist("ゴールポスト", goal_post)
     receptionistC.make_reservation(12, "森崎")
 
 
