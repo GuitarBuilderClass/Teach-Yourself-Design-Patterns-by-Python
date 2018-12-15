@@ -7,12 +7,28 @@ class CourtScheduler:
     """予約管理クラス"""
     _has_instance = None
 
-    def __new__(cls, *args, **kwargs):
+    def __new__(cls):
         if not cls._has_instance:
             cls._has_instance = super(
-                    CourtScheduler, cls).__new__(cls, *args, **kwargs)
+                CourtScheduler, cls).__new__(cls)
             cls.__initialize()
         return cls._has_instance
+
+    def __init__(self):
+        if __name__ == '__main__':
+            self.booking: list = self.__new__()
+
+    @classmethod
+    def __initialize(cls) -> list:
+        """
+        予約台帳の初期化をする
+        Returns:
+           1ページも埋まっていない本
+        """
+        cls.booking = list()
+        for __ in range(HOURS):
+            cls.booking += " "
+        return cls.booking
 
     @classmethod
     def schedule(cls, hour: int, person: str) -> None:
@@ -22,14 +38,7 @@ class CourtScheduler:
             hour (int): 予約希望時間
             person (str): 予約希望者
         """
-        cls.booking[hour]: object = person
-
-    @classmethod
-    def __initialize(cls):
-        cls.booking = list()
-        for __ in range(HOURS):
-            cls.booking += " "
-        return cls.booking
+        cls.booking[hour] = person
 
 
 class Receptionist:
