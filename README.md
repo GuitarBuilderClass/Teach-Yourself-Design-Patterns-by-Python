@@ -11,6 +11,8 @@ Ch. 2 デザインパターンとは
 
 ## Part2 使用頻度が高いパターン
 Ch. 3 Singleton
+- [適用前](https://github.com/GuitarBuilderClass/Teach-Yourself-Design-Patterns-by-Python/blob/master/Part2/3_1_useless_singleton.py)
+- [適用後](https://github.com/GuitarBuilderClass/Teach-Yourself-Design-Patterns-by-Python/blob/master/Part2/3_1_singleton.py)
 
 Ch. 4 Factory Method
 
