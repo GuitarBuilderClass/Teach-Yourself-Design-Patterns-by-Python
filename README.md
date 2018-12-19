@@ -7,10 +7,12 @@ O'REILLY『実践 Python 3』はPythonに即したデザインパターンが掲
 ## Part1　オブジェクト指向とデザインパターン
 Ch. 1 オブジェクト指向とUML
 
-Ch. 2 デザインパターンとは
+Ch. 2 [デザインパターンとは](https://github.com/GuitarBuilderClass/Teach-Yourself-Design-Patterns-by-Python/blob/master/Part1/Ch02_Whats_Design_Patterns/ch02_memo.md)
 
 ## Part2 使用頻度が高いパターン
 Ch. 3 Singleton
+- [適用前](https://github.com/GuitarBuilderClass/Teach-Yourself-Design-Patterns-by-Python/blob/master/Part2/3_1_useless_singleton.py)
+- [適用後](https://github.com/GuitarBuilderClass/Teach-Yourself-Design-Patterns-by-Python/blob/master/Part2/3_1_singleton.py)
 
 Ch. 4 Factory Method
 
