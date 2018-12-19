@@ -1,6 +1,6 @@
 #! /usr/bin/env python3
 
-FILE = "test.md"
+FILE = "test.txt"
 
 
 class FileDataObject:
