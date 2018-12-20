@@ -1,5 +1,6 @@
 #! /usr/bin/env python3
 
+# 読み込み対象ファイル
 FILE = "test.txt"
 
 
