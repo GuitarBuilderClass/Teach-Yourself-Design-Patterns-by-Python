@@ -1,3 +1,0 @@
-# standalone 環境の場合は 0
-# DB 環境の場合は 1
-data_storage: 0
