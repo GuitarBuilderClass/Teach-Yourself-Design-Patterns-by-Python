@@ -1,31 +1,33 @@
 #! /usr/bin/env python3
 from abc import ABCMeta, abstractmethod
-from enum import Enum
+from enum import Enum, auto
 
 # 読み込み対象ファイル
 FILE = 'test.txt'
 
 
-class Object(Enum):
-    STANDALONE = 0
-    NETWORKING = 1
-
-
 class DataObject(metaclass=ABCMeta):
-    # 戻り値となるクラスを DataObject クラスを継承しているものと入れ替えれば
-    # Client クラス側は DataObject.create() を呼び出すだけでよく、変更後の影響範囲は少ない
-
-    @staticmethod
-    def create(data_type):
-        if data_type == Object.STANDALONE:
-            return FileDataObject()
-        elif data_type == Object.NETWORKING:
-            return DbDataObject()
 
     @abstractmethod
     def read_data_object(self, num):
         pass
 
+
+# オブジェクト生成の責任を負うクラス
+class DataObjectFactory(Enum):
+    STANDALONE = auto()
+    NETWORKING = auto()
+
+    def __init__(self, object_type):
+        self._type = object_type
+
+    def create(self):
+        if self._type == self.STANDALONE:
+            return FileDataObject()
+        if self._type == self.NETWORKING:
+            return DbDataObject()
+
+    def read_data_object(self, num):
 
 class FileDataObject(DataObject):
 
@@ -53,15 +55,11 @@ class DbDataObject(DataObject):
 
 class Client:
 
-    def __init__(self):
-        self.data_object = DataObject.create(Object.STANDALONE)
+    def __init__(self, object_type):
+        self.data_object = DataObjectFactory.create(object_type)
 
     def operating(self, num):
-        # DataObject.create() で FileDataObject を呼び出しているため
-        # 呼び出し元のクラスは FileDataObject から別のクラスへ容易に変更ができる
-        # つまり、 Client クラスはFileDataObject の存在を知らなくても FileDataObject を利用できる
-        # コーディングする時は DataObject.create() を呼び出すだけなので Client クラス側には変更の影響が少なくなる
-        person = self.data_object.read_data_object(num)
+        person = self.data_object
         return person
 
 
