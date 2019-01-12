@@ -2,20 +2,13 @@
 from abc import ABCMeta, abstractmethod
 from enum import Enum
 
-# 読み込み対象ファイル
-FILE = 'test.txt'
-
 
 class Object(Enum):
     STANDALONE = 0
     NETWORKING = 1
 
 
-class DataObjectFactory(metaclass=ABCMeta):
-    pass
-
-
-class DataObject(metaclass=ABCMeta):
+class DataObjectFactory:
     # 戻り値となるクラスを DataObject クラスを継承しているものと入れ替えれば
     # Client クラス側は DataObject.create() を呼び出すだけでよく、変更後の影響範囲は少ない
 
@@ -26,17 +19,19 @@ class DataObject(metaclass=ABCMeta):
         elif data_type == Object.NETWORKING:
             return DbDataObject()
 
+
+class DataObject(metaclass=ABCMeta):
     @abstractmethod
     def read_data_object(self, num):
         pass
 
 
-class FileDataObject(DataObject):
+class FileDataObject(metaclass=ABCMeta):
 
     def __init__(self):
         self.data_list = list()
 
-        with open(FILE, 'r') as f:
+        with open('test.csv', 'r') as f:
             for line in f:
                 self.data_list.append(line)
 
@@ -58,14 +53,14 @@ class DbDataObject(DataObject):
 class Client:
 
     def __init__(self):
-        self.data_object = DataObject.create(Object.STANDALONE)
+        self.factory = DataObjectFactory.create(Object.STANDALONE)
 
     def operating(self, num):
         # DataObject.create() で FileDataObject を呼び出しているため
         # 呼び出し元のクラスは FileDataObject から別のクラスへ容易に変更ができる
         # つまり、 Client クラスはFileDataObject の存在を知らなくても FileDataObject を利用できる
         # コーディングする時は DataObject.create() を呼び出すだけなので Client クラス側には変更の影響が少なくなる
-        person = self.data_object.read_data_object(num)
+        person = self.factory.read_data_object(num)
         return person
 
 
@@ -75,7 +70,11 @@ if __name__ == '__main__':
     i = 0
     while True:
         try:
-            print(client.operating(i))
+            print(client.operating(i), end="")
             i += 1
         except IndexError:
             break
+
+    row = client.operating(1)
+    print("\n")
+    print(row)

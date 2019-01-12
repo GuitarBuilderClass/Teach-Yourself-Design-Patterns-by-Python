@@ -74,3 +74,7 @@ if __name__ == '__main__':
             i += 1
         except IndexError:
             break
+
+    row = client.operating(1)
+    print("\n")
+    print(row)
