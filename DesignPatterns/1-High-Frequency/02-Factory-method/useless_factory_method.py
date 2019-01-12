@@ -1,20 +1,17 @@
 #! /usr/bin/env python3
-
-# 読み込み対象ファイル
-FILE = "test.txt"
+"""本番ではデータベースに接続するが、開発中はcsvファイルを使う"""
 
 
 class FileDataObject:
-
     def __init__(self):
         self.data_list = list()
 
-        with open(FILE, 'r') as f:
+        with open('test.csv', 'r') as f:
             for line in f:
                 self.data_list.append(line)
 
-    def read_data_object(self, row_num):
-        return self.data_list[row_num]
+    def read_data_object(self, id):
+        return self.data_list[id]
 
 
 class DbDataObject:
@@ -30,10 +27,14 @@ class DbDataObject:
 
 class Client:
     def __init__(self):
+        # あとでFileDataObjectからDbDataObjectへ変更するときは
+        # ここで呼び出すクラスを変更すればよいという目論見
+
+        # ただし、Clientを呼び出すたびにFileDataObjectクラスが生成される
         self.data_object = FileDataObject()
 
-    def operating(self, row):
-        person = self.data_object.read_data_object(row)
+    def operating(self, id):
+        person = self.data_object.read_data_object(id)
         return person
 
 
@@ -43,7 +44,11 @@ if __name__ == '__main__':
     i = 0
     while True:
         try:
-            print(client.operating(i))
+            print(client.operating(i), end="")
             i += 1
         except IndexError:
             break
+
+    row = client.operating(1)
+    print("\n")
+    print(row)

@@ -1,20 +1,20 @@
 #! /usr/bin/env python3
 from abc import ABCMeta, abstractmethod
 
-# 読み込み対象ファイル
-FILE = 'test.txt'
-
 
 class DataObject(metaclass=ABCMeta):
+    """ABCMetaを利用して子クラスとなるFileDataObjectとDbDataObjectの切り替えを行なう"""
 
     @staticmethod
     def create():
-        # 戻り値となるクラスを DataObject クラスを継承しているものと入れ替えれば
-        # Client クラス側は DataObject.create() を呼び出すだけでよく、変更後の影響範囲は少ない
+        # クライアント側はFileDataObjectもDbDataObjectの存在を知る必要がなく
+        # オブジェクト生成を一箇所にまとめられる
         return FileDataObject()
 
     @abstractmethod
-    def read_data_object(self, num):
+    def read_data_object(self, id):
+        # read_data_objectは抽象メソッドで、
+        # 実際の処理は子メソッドで実装したものが実行される
         pass
 
 
@@ -23,7 +23,7 @@ class FileDataObject(DataObject):
     def __init__(self):
         self.data_list = list()
 
-        with open(FILE, 'r') as f:
+        with open('test.csv', 'r') as f:
             for line in f:
                 self.data_list.append(line)
 
@@ -50,8 +50,8 @@ class Client:
     def operating(self, num):
         # DataObject.create() で FileDataObject を呼び出しているため
         # 呼び出し元のクラスは FileDataObject から別のクラスへ容易に変更ができる
-        # つまり、 Client クラスはFileDataObject の存在を知らなくても FileDataObject を利用できる
-        # コーディングする時は DataObject.create() を呼び出すだけなので Client クラス側には変更の影響が少なくなる
+        # つまり、Client クラスは FileDataObject の存在を知らなくても FileDataObject を利用できる
+        # DbDataObject への変更を Client クラス側で行なう必要がなくなる
         person = self.data_object.read_data_object(num)
         return person
 
@@ -62,7 +62,11 @@ if __name__ == '__main__':
     i = 0
     while True:
         try:
-            print(client.operating(i))
+            print(client.operating(i), end="")
             i += 1
         except IndexError:
             break
+
+    row = client.operating(1)
+    print("\n")
+    print(row)
