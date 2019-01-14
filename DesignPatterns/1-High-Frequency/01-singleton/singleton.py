@@ -12,11 +12,11 @@ class CourtScheduler:
             cls._has_instance = super(
                 CourtScheduler, cls).__new__(cls)
             cls.__initialize()
+
         return cls._has_instance
 
-    def __init__(self):
-        if __name__ == '__main__':
-            self.booking: list = self.__new__()
+    def __init__(self) -> None:
+        pass
 
     @classmethod
     def __initialize(cls) -> list:
