@@ -1,33 +1,36 @@
 #! /usr/bin/env python3
 from abc import ABCMeta, abstractmethod
+from enum import Enum, auto
+from typing import List
+
+
+class DbMode(Enum):
+    STANDALONE: int = auto()
+    NETWORKING: int = auto()
 
 
 class DataObject(metaclass=ABCMeta):
-    """ABCMetaを利用して子クラスとなるFileDataObjectとDbDataObjectの切り替えを行なう"""
+    # 戻り値となるクラスを DataObject クラスを1継承しているものと入れ替えれば
+    # Client クラス側は DataObject.create() を呼び出すだけでよく、変更後の影響範囲は少ない
 
-    @staticmethod
-    def create() -> object:
-        # クライアント側はFileDataObjectもDbDataObjectの存在を知る必要がなく
-        # オブジェクト生成を一箇所にまとめられる
-        return FileDataObject()
+    def __init__(self) -> None:
+        pass
 
     @abstractmethod
-    def read_data_object(self, num: int) -> None:
-        # read_data_objectは抽象メソッドで、
-        # 実際の処理は子メソッドで実装したものが実行される
+    def fetch_data_object(self, num: int) -> str:
         pass
 
 
 class FileDataObject(DataObject):
 
     def __init__(self) -> None:
-        self.data_list: list = list()
+        self.data_list: List[str] = list()
 
-        with open('test.txt', 'r') as f:
+        with open('test.csv', 'r') as f:
             for line in f:
                 self.data_list.append(line)
 
-    def read_data_object(self, row_num: int) -> str:
+    def fetch_data_object(self, row_num: int) -> str:
         return self.data_list[row_num]
 
 
@@ -38,35 +41,50 @@ class DbDataObject(DataObject):
         # DBへの接続手続きなど
         pass
 
-    def read_data_object(self, id_num):
+    def fetch_data_object(self, id_num: int) -> str:
+        #
         pass
 
 
+class DataObjectFactory:
+    def __init__(self, db_type: DbMode) -> None:
+        self._db_type: DbMode = db_type
+
+    def create(self):
+        if self._db_type == DbMode.STANDALONE:
+            return FileDataObject()
+        if self._db_type == DbMode.NETWORKING:
+            return DbDataObject()
+
+
 class Client:
-
     def __init__(self) -> None:
-        self.data_object = DataObject.create()
+        # あとでFileDataObjectからDbDataObjectへ変更するときは
+        # ここで呼び出すクラスを変更すればよいという目論見
 
-    def operating(self, num: int) -> str:
-        # DataObject.create() で FileDataObject を呼び出しているため
-        # 呼び出し元のクラスは FileDataObject から別のクラスへ容易に変更ができる
-        # つまり、Client クラスは FileDataObject の存在を知らなくても FileDataObject を利用できる
-        # DbDataObject への変更を Client クラス側で行なう必要がなくなる
-        person: str = self.data_object.read_data_object(num)
+        # ただし、Clientを呼び出すたびにFileDataObjectクラスが生成される
+        self.factory: DataObjectFactory = DataObjectFactory(DbMode.STANDALONE)
+        self.data_object: DataObject = self.factory.create()
+
+    def operating(self, id_num: int) -> str:
+        person: str = self.data_object.fetch_data_object(id_num)
         return person
 
 
 if __name__ == '__main__':
-    client = Client()
+
+    factory: DataObjectFactory = DataObjectFactory(DbMode.STANDALONE)
+    client: DataObject = factory.create()
 
     i = 0
     while True:
         try:
-            print(client.operating(i), end="")
+            print(client.fetch_data_object(i), end="")
             i += 1
         except IndexError:
             break
 
-    row = client.operating(1)
+    client2: DataObject = factory.create()
+    row = client.fetch_data_object(1)
     print("\n")
     print(row)
