@@ -22,7 +22,7 @@ class DbDataObject:
         # DBへの接続手続きなど
         pass
 
-    def fetch_data_object(self, row_num: int) -> str:
+    def fetch_data_object(self, id_num: int) -> str:
         pass
 
 
@@ -34,15 +34,15 @@ class Client:
         # ただし、Clientを呼び出すたびにFileDataObjectクラスが生成される
         self.data_object: FileDataObject = FileDataObject()
 
-    def operating(self, row_num: int) -> str:
-        person: str = self.data_object.fetch_data_object(row_num)
+    def operating(self, id_num: int) -> str:
+        person: str = self.data_object.fetch_data_object(id_num)
         return person
 
 
 if __name__ == '__main__':
-    client = Client()
+    client: Client = Client()
 
-    i = 0
+    i: int = 0
     while True:
         try:
             print(client.operating(i), end="")
@@ -50,6 +50,6 @@ if __name__ == '__main__':
         except IndexError:
             break
 
-    row = client.operating(1)
+    row: str = client.operating(1)
     print("\n")
     print(row)

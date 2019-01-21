@@ -16,8 +16,15 @@ class DataObject(metaclass=ABCMeta):
     def __init__(self) -> None:
         pass
 
+    @staticmethod
+    def create(db_type: DbMode):
+        if db_type == DbMode.STANDALONE:
+            return FileDataObject()
+        if db_type == DbMode.NETWORKING:
+            return DbDataObject()
+
     @abstractmethod
-    def fetch_data_object(self, num: int) -> str:
+    def fetch_data_object(self, id_num: int) -> str:
         pass
 
 
@@ -30,8 +37,8 @@ class FileDataObject(DataObject):
             for line in f:
                 self.data_list.append(line)
 
-    def fetch_data_object(self, row_num: int) -> str:
-        return self.data_list[row_num]
+    def fetch_data_object(self, id_num: int) -> str:
+        return self.data_list[id_num]
 
 
 class DbDataObject(DataObject):
@@ -42,29 +49,12 @@ class DbDataObject(DataObject):
         pass
 
     def fetch_data_object(self, id_num: int) -> str:
-        #
         pass
-
-
-class DataObjectFactory:
-    def __init__(self, db_type: DbMode) -> None:
-        self._db_type: DbMode = db_type
-
-    def create(self):
-        if self._db_type == DbMode.STANDALONE:
-            return FileDataObject()
-        if self._db_type == DbMode.NETWORKING:
-            return DbDataObject()
 
 
 class Client:
     def __init__(self) -> None:
-        # あとでFileDataObjectからDbDataObjectへ変更するときは
-        # ここで呼び出すクラスを変更すればよいという目論見
-
-        # ただし、Clientを呼び出すたびにFileDataObjectクラスが生成される
-        self.factory: DataObjectFactory = DataObjectFactory(DbMode.STANDALONE)
-        self.data_object: DataObject = self.factory.create()
+        self.data_object: DataObject = DataObject.create(DbMode.STANDALONE)
 
     def operating(self, id_num: int) -> str:
         person: str = self.data_object.fetch_data_object(id_num)
@@ -73,18 +63,16 @@ class Client:
 
 if __name__ == '__main__':
 
-    factory: DataObjectFactory = DataObjectFactory(DbMode.STANDALONE)
-    client: DataObject = factory.create()
+    client: Client = Client()
 
-    i = 0
+    i: int = 0
     while True:
         try:
-            print(client.fetch_data_object(i), end="")
+            print(client.operating(i), end="")
             i += 1
         except IndexError:
             break
 
-    client2: DataObject = factory.create()
-    row = client.fetch_data_object(1)
+    row: str = client.operating(1)
     print("\n")
     print(row)

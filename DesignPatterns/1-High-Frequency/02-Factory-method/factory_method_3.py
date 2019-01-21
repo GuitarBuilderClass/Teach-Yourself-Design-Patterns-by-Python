@@ -1,6 +1,6 @@
 #! /usr/bin/env python3
 from abc import ABC, ABCMeta, abstractmethod
-
+from typing import List
 
 class DataObject(metaclass=ABCMeta):
     @abstractmethod
@@ -13,7 +13,7 @@ class DataObject(metaclass=ABCMeta):
 class FileDataObject(DataObject):
 
     def __init__(self) -> None:
-        self.data_list: list = list()
+        self.data_list: List[str] = list()
 
         with open('test.csv', 'r') as f:
             for line in f:
@@ -58,8 +58,14 @@ class DataObjectFactory(ABC):
     #
     #     if self._db_type == DbMode.DEBUGGING: <- このように追加するとコード修正時に他の部分へ影響が出るかもしれない
     #         return DefaultDataObject()
-    # そこで DataObjectFactory クラスをインターフェースにする
-
+    #
+    # そこで DataObjectFactory クラスを ABC を用いてインターフェースにする
+    # Python で Java のインターフェースのように振る舞うのは Mix-In であり
+    # ABC を用いると手っ取り早いみたい？
+    #
+    # > ABC は直接的にサブクラス化することができ、ミックスイン(mix-in)クラスのように振る舞います。
+    # 出典: https://docs.python.org/ja/3.7/library/abc.html
+    # .register の使い方がよくわからん。
 
 class FileDataObjectFactory(DataObjectFactory):
     def __init__(self) -> None:
@@ -113,6 +119,6 @@ if __name__ == '__main__':
             break
 
     client2: Client = Client()
-    row = client2.operating(1)
+    row = client2.operating(3)
     print("\n")
     print(row)
