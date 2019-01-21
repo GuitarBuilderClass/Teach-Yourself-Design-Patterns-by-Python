@@ -3,14 +3,14 @@ from abc import ABCMeta, abstractmethod
 from enum import Enum, auto
 from typing import List
 
-# クライアント側でいくつも DataObjectを生成する場合、その1では毎回 DbMode を指定する必要がある
-# 毎回 DbMode を指定するなら同一のインスタンスを毎回指定しているにすぎない
-# クライアント側では DbMode を意識せずに複数インスタンス化できるように変更する
+# パターン1はファイルからDBへ切り替えが予定されていることが分かっている場合の設計で
+# クライアント側のコードに影響を与えないことを大切にしている
+# パターン2ではクライアント側からどのクラスを呼び出すか切り替えられる設計を目指す
 
 
-class DbMode(Enum):
-    STANDALONE: int = auto()
-    NETWORKING: int = auto()
+class DBMode(Enum):
+    STANDALONE: int = auto()  # ファイルからの読み書き
+    NETWORKING: int = auto()  # DB からの読み書き
 
 
 class DataObject(metaclass=ABCMeta):
@@ -29,6 +29,7 @@ class DataObject(metaclass=ABCMeta):
 class FileDataObject(DataObject):
 
     def __init__(self) -> None:
+        super().__init__()
         self.data_list: List[str] = list()
 
         with open('test.csv', 'r') as f:
@@ -39,12 +40,12 @@ class FileDataObject(DataObject):
         return self.data_list[id_num]
 
 
-class DbDataObject(DataObject):
+class DBDataObject(DataObject):
     """未実装クラスだが、将来的に FileDataObject と差し替える予定"""
 
     def __init__(self) -> None:
         # DBへの接続手続きなど
-        pass
+        super().__init__()
 
     def fetch_data_object(self, id_num: int) -> str:
         pass
@@ -52,37 +53,36 @@ class DbDataObject(DataObject):
 
 class DataObjectFactory:
     # オブジェクト生成の責任を負う
+    # create 時にどのクラスを呼び出すか1度決めてしまえば、以後は毎回クラスを指定する必要がなくなる
 
     @staticmethod
-    def create(data_type: DbMode):
-        if data_type == DbMode.STANDALONE:
+    def create(data_type: DBMode):
+        if data_type == DBMode.STANDALONE:
             return FileDataObject()
-        if data_type == DbMode.NETWORKING:
-            return DbDataObject()
+        if data_type == DBMode.NETWORKING:
+            return DBDataObject()
 
 
 class Client:
 
     def __init__(self) -> None:
         self.factory = DataObjectFactory()
-        self.data_object = self.factory.create(DbMode.STANDALONE)  # ここで DbMode を指定する
 
-    def operating(self, id_num: int) -> str:
-        person = self.data_object.fetch_data_object(id_num)
-        return person
+        # ここで DbMode を指定する
+        self.data_object = self.factory.create(DBMode.STANDALONE)
 
 
 if __name__ == '__main__':
-    client: Client = Client()
+    client: DataObject = Client().data_object
 
     i: int = 0
     while True:
         try:
-            print(client.operating(i), end="")
+            print(client.fetch_data_object(i), end="")
             i += 1
         except IndexError:
             break
 
-    row: str = client.operating(2)
+    row: str = client.fetch_data_object(2)
     print("\n")
     print(row)

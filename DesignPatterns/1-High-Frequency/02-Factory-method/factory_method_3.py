@@ -1,10 +1,14 @@
 #! /usr/bin/env python3
-from abc import ABC, ABCMeta, abstractmethod
+from abc import ABCMeta, abstractmethod
 from typing import List
+
+# クラス追加時に修正ミスで挙動がおかしくなるのを防ぎたい
+#
+
 
 class DataObject(metaclass=ABCMeta):
     @abstractmethod
-    def read_data_object(self, num: int) -> str:
+    def fetch_data_object(self, num: int) -> str:
         # read_data_objectは抽象メソッドで、
         # 実際の処理は子メソッドで実装したものが実行される
         pass
@@ -19,18 +23,18 @@ class FileDataObject(DataObject):
             for line in f:
                 self.data_list.append(line)
 
-    def read_data_object(self, id_num: int) -> str:
+    def fetch_data_object(self, id_num: int) -> str:
         return self.data_list[id_num]
 
 
-class DbDataObject(DataObject):
+class DBDataObject(DataObject):
     """未実装クラスだが、将来的に FileDataObject と差し替える予定"""
 
     def __init__(self) -> None:
         # DBへの接続手続きなど
         pass
 
-    def read_data_object(self, id_num: int) -> str:
+    def fetch_data_object(self, id_num: int) -> str:
         pass
 
 
@@ -40,11 +44,12 @@ class DefaultDataObject(DataObject):
     def __init__(self) -> None:
         pass
 
-    def read_data_object(self, id_num: int) -> str:
+    def fetch_data_object(self, id_num: int) -> str:
         pass
 
 
-class DataObjectFactory(ABC):
+class DataObjectFactory(object, metaclass=ABCMeta):
+
     def __init__(self) -> None:
         pass
 
@@ -59,66 +64,65 @@ class DataObjectFactory(ABC):
     #     if self._db_type == DbMode.DEBUGGING: <- このように追加するとコード修正時に他の部分へ影響が出るかもしれない
     #         return DefaultDataObject()
     #
-    # そこで DataObjectFactory クラスを ABC を用いてインターフェースにする
+    # DataObjectFactory クラスは、パターン2ではオブジェクト生成の責任を負うクラスだったが
+    # パターン3ではこれを ABC を用いてインターフェースにする
+    #
     # Python で Java のインターフェースのように振る舞うのは Mix-In であり
     # ABC を用いると手っ取り早いみたい？
     #
     # > ABC は直接的にサブクラス化することができ、ミックスイン(mix-in)クラスのように振る舞います。
     # 出典: https://docs.python.org/ja/3.7/library/abc.html
+    #
     # .register の使い方がよくわからん。
+
 
 class FileDataObjectFactory(DataObjectFactory):
     def __init__(self) -> None:
-        pass
+        super().__init__()
 
+    # インターフェースを使用して DataObject を生成する
     def create(self) -> FileDataObject:
         return FileDataObject()
 
 
-class DbDataObjectFactory(DataObjectFactory):
-    def __init__(self) -> None:
-        pass
+class DBDataObjectFactory(DataObjectFactory):
 
-    def create(self) -> DbDataObject:
-        return DbDataObject()
+    def __init__(self) -> None:
+        super().__init__()
+
+    def create(self) -> DBDataObject:
+        return DBDataObject()
 
 
 class DefaultObjectFactory(DataObjectFactory):
     def __init__(self) -> None:
-        pass
+        super().__init__()
 
     def create(self) -> DefaultDataObject:
         return DefaultDataObject()
 
 
 class Client:
+    """DataObject側で行を取得できるようにしているので、このクラスで列指定とかしたい"""
 
     def __init__(self) -> None:
-        self.factory: DataObjectFactory = FileDataObjectFactory()
-        self.data_object: DataObject = self.factory.create()
-
-    def operating(self, num: int) -> str:
-        # self.factory.create() で FileDataObject を呼び出しているため
-        # 呼び出し元のクラスは FileDataObject から別のクラスへ容易に変更ができる
-        # つまり、Client クラスは FileDataObject の存在を知らなくても FileDataObject を利用できる
-        # DbDataObject への変更を Client クラス側で行なう必要がなくなる
-        person: str = self.data_object.read_data_object(num)
-        return person
+        pass
 
 
 if __name__ == '__main__':
 
-    client1 = Client()
+    client1: DataObject = FileDataObjectFactory().create()
+    client2: DataObject = DBDataObjectFactory().create()
+    client3: DataObject = DefaultObjectFactory().create()
 
     i = 0
     while True:
         try:
-            print(client1.operating(i), end="")
+            print(client1.fetch_data_object(i), end="")
             i += 1
         except IndexError:
             break
 
-    client2: Client = Client()
-    row = client2.operating(3)
+    row = client1.fetch_data_object(3)
     print("\n")
     print(row)
