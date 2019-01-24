@@ -1,72 +1,67 @@
 #! /usr/bin/env python3
 from abc import ABCMeta, abstractmethod
+from typing import List
 
 
 class DataObject(metaclass=ABCMeta):
-    """ABCMetaを利用して子クラスとなるFileDataObjectとDbDataObjectの切り替えを行なう"""
+
+    def __init__(self) -> None:
+        pass
 
     @staticmethod
-    def create() -> object:
-        # クライアント側はFileDataObjectもDbDataObjectの存在を知る必要がなく
-        # オブジェクト生成を一箇所にまとめられる
+    def create():
+        # Client側は DataObject がどのオブジェクトを呼んでいるか意識する必要がなくなる
+        # Client内で複数 DataObject を呼び出している場合はその全てを修正する必要があるが
+        # このコードでは create の戻り値を変更するだけで全体の修正が可能になる
         return FileDataObject()
 
     @abstractmethod
-    def read_data_object(self, num: int) -> str:
-        # read_data_objectは抽象メソッドで、
-        # 実際の処理は子メソッドで実装したものが実行される
+    def fetch_data_object(self, id_num: int) -> str:
         pass
 
 
 class FileDataObject(DataObject):
 
     def __init__(self) -> None:
-        self.data_list: list = list()
+        super().__init__()
+        self.data_list: List[str] = list()
 
         with open('test.csv', 'r') as f:
             for line in f:
                 self.data_list.append(line)
 
-    def read_data_object(self, row_num: int) -> str:
-        return self.data_list[row_num]
+    def fetch_data_object(self, id_num: int) -> str:
+        return self.data_list[id_num]
 
 
-class DbDataObject(DataObject):
+class DBDataObject(DataObject):
     """未実装クラスだが、将来的に FileDataObject と差し替える予定"""
 
     def __init__(self) -> None:
         # DBへの接続手続きなど
-        pass
+        super().__init__()
 
-    def read_data_object(self, id_num):
+    def fetch_data_object(self, id_num: int) -> str:
         pass
 
 
 class Client:
-
     def __init__(self) -> None:
-        self.data_object = DataObject.create()
-
-    def operating(self, num: int) -> str:
-        # DataObject.create() で FileDataObject を呼び出しているため
-        # 呼び出し元のクラスは FileDataObject から別のクラスへ容易に変更ができる
-        # つまり、Client クラスは FileDataObject の存在を知らなくても FileDataObject を利用できる
-        # DbDataObject への変更を Client クラス側で行なう必要がなくなる
-        person: str = self.data_object.read_data_object(num)
-        return person
+        self.data_object: DataObject = DataObject.create()
 
 
 if __name__ == '__main__':
-    client = Client()
 
-    i = 0
+    client: DataObject = Client().data_object
+
+    i: int = 0
     while True:
         try:
-            print(client.operating(i), end="")
+            print(client.fetch_data_object(i), end="")
             i += 1
         except IndexError:
             break
 
-    row = client.operating(1)
+    row: str = client.fetch_data_object(1)
     print("\n")
     print(row)
