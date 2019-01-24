@@ -6,14 +6,14 @@ from typing import List
 
 class FileDataObject:
     def __init__(self) -> None:
-        self.data_list: List[str] = list()
+        self.user_list: List[str] = list()
 
         with open('test.csv', 'r') as f:
             for line in f:
-                self.data_list.append(line)
+                self.user_list.append(line)
 
-    def fetch_data_object(self, row_num: int) -> str:
-        return self.data_list[row_num]
+    def fetch_user(self, row_num: int) -> str:
+        return self.user_list[row_num]
 
 
 class DBDataObject:
@@ -23,7 +23,7 @@ class DBDataObject:
         # DBへの接続手続きなど
         pass
 
-    def fetch_data_object(self, id_num: int) -> str:
+    def fetch_user(self, id_num: int) -> str:
         pass
 
 
@@ -31,7 +31,7 @@ class Client:
     def __init__(self) -> None:
         # あとでFileDataObjectからDbDataObjectへ変更するときは
         # ここで呼び出すクラスを変更すればよいという目論見
-        self.data_object: FileDataObject = FileDataObject()
+        self.data_object = FileDataObject()
 
 
 if __name__ == '__main__':
@@ -40,11 +40,11 @@ if __name__ == '__main__':
     i: int = 0
     while True:
         try:
-            print(client.fetch_data_object(i), end="")
+            print(client.fetch_user(i), end="")
             i += 1
         except IndexError:
             break
 
-    row: str = client.fetch_data_object(1)
+    user: str = client.fetch_user(1)
     print("\n")
-    print(row)
+    print(user)

@@ -2,13 +2,10 @@
 from abc import ABCMeta, abstractmethod
 from typing import List
 
-# クラス追加時に修正ミスで挙動がおかしくなるのを防ぎたい
-#
-
 
 class DataObject(metaclass=ABCMeta):
     @abstractmethod
-    def fetch_data_object(self, num: int) -> str:
+    def fetch_user(self, num: int) -> str:
         # read_data_objectは抽象メソッドで、
         # 実際の処理は子メソッドで実装したものが実行される
         pass
@@ -23,18 +20,19 @@ class FileDataObject(DataObject):
             for line in f:
                 self.data_list.append(line)
 
-    def fetch_data_object(self, id_num: int) -> str:
+    def fetch_user(self, id_num: int) -> str:
         return self.data_list[id_num]
 
 
 class DBDataObject(DataObject):
     """未実装クラスだが、将来的に FileDataObject と差し替える予定"""
 
+
     def __init__(self) -> None:
         # DBへの接続手続きなど
         pass
 
-    def fetch_data_object(self, id_num: int) -> str:
+    def fetch_user(self, id_num: int) -> str:
         pass
 
 
@@ -44,7 +42,7 @@ class DefaultDataObject(DataObject):
     def __init__(self) -> None:
         pass
 
-    def fetch_data_object(self, id_num: int) -> str:
+    def fetch_user(self, id_num: int) -> str:
         pass
 
 
@@ -118,11 +116,11 @@ if __name__ == '__main__':
     i = 0
     while True:
         try:
-            print(client1.fetch_data_object(i), end="")
+            print(client1.fetch_user(i), end="")
             i += 1
         except IndexError:
             break
 
-    row = client1.fetch_data_object(3)
+    user = client1.fetch_user(3)
     print("\n")
-    print(row)
+    print(user)

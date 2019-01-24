@@ -16,7 +16,7 @@ class DataObject(metaclass=ABCMeta):
         return FileDataObject()
 
     @abstractmethod
-    def fetch_data_object(self, id_num: int) -> str:
+    def fetch_user(self, id_num: int) -> str:
         pass
 
 
@@ -24,14 +24,14 @@ class FileDataObject(DataObject):
 
     def __init__(self) -> None:
         super().__init__()
-        self.data_list: List[str] = list()
+        self.user_list: List[str] = list()
 
         with open('test.csv', 'r') as f:
             for line in f:
-                self.data_list.append(line)
+                self.user_list.append(line)
 
-    def fetch_data_object(self, id_num: int) -> str:
-        return self.data_list[id_num]
+    def fetch_user(self, id_num: int) -> str:
+        return self.user_list[id_num]
 
 
 class DBDataObject(DataObject):
@@ -41,7 +41,7 @@ class DBDataObject(DataObject):
         # DBへの接続手続きなど
         super().__init__()
 
-    def fetch_data_object(self, id_num: int) -> str:
+    def fetch_user(self, id_num: int) -> str:
         pass
 
 
@@ -54,14 +54,14 @@ if __name__ == '__main__':
 
     client: DataObject = Client().data_object
 
-    i: int = 0
+    i = 0
     while True:
         try:
-            print(client.fetch_data_object(i), end="")
+            print(client.fetch_user(i), end="")
             i += 1
         except IndexError:
             break
 
-    row: str = client.fetch_data_object(1)
+    user: str = client.fetch_user(1)
     print("\n")
-    print(row)
+    print(user)
