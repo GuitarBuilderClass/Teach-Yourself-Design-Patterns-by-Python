@@ -46,23 +46,23 @@ class GuitarFactory:
     """Factory クラスから材を呼び出せるようにする"""
 
     # Telecaster の材を呼び出す
-    def create_telecaster_neck(self) -> TelecasterNeck:
+    def choice_telecaster_neck(self) -> TelecasterNeck:
         return TelecasterNeck()
 
-    def create_telecaster_fingerboard(self) -> TelecasterFingerboard:
+    def choice_telecaster_fingerboard(self) -> TelecasterFingerboard:
         return TelecasterFingerboard()
 
-    def create_telecaster_body(self) -> TelecasterBody:
+    def choice_telecaster_body(self) -> TelecasterBody:
         return TelecasterBody()
 
     # Les Paul の材を呼び出す
-    def create_les_paul_neck(self) -> LesPaulNeck:
+    def choice_les_paul_neck(self) -> LesPaulNeck:
         return LesPaulNeck()
 
-    def create_les_paul_fingerboard(self) -> LesPaulFingerboard:
+    def choice_les_paul_fingerboard(self) -> LesPaulFingerboard:
         return LesPaulFingerboard()
 
-    def create_les_paul_body(self) -> LesPaulBody:
+    def choice_les_paul_body(self) -> LesPaulBody:
         return LesPaulBody()
 
 
@@ -86,14 +86,14 @@ class Order:
         factory: GuitarFactory = GuitarFactory()
 
         if self.type == GuitarType.Telecaster:
-            neck = factory.create_telecaster_neck()
-            fingerboard = factory.create_telecaster_fingerboard()
-            body = factory.create_telecaster_body()
+            neck = factory.choice_telecaster_neck()
+            fingerboard = factory.choice_telecaster_fingerboard()
+            body = factory.choice_telecaster_body()
 
         if self.type == GuitarType.LesPaul:
-            neck = factory.create_les_paul_neck()
-            fingerboard = factory.create_les_paul_fingerboard()
-            body = factory.create_les_paul_body()
+            neck = factory.choice_les_paul_neck()
+            fingerboard = factory.choice_les_paul_fingerboard()
+            body = factory.choice_les_paul_body()
 
         use_neck: str = neck.feature()
         use_fingerboard: str = fingerboard.feature()
