@@ -4,12 +4,12 @@ from typing import Union
 
 
 class GuitarType(Enum):
-    Telecaster = auto()
-    LesPaul = auto()
+    Telecaster: int = auto()
+    LesPaul: int = auto()
 
 
+#Telecaster の材をクラス化する
 class TelecasterNeck:
-    """Telecaster の材をクラス化する"""
 
     def feature(self) -> str:
         return "Maple, C Shape"
@@ -25,8 +25,8 @@ class TelecasterBody:
         return "Swamp Ash"
 
 
+# Les Paul の材をクラス化する
 class LesPaulNeck:
-    """Les Paul の材をクラス化する"""
 
     def feature(self) -> str:
         return "Mahogany, Slim taper shape"
