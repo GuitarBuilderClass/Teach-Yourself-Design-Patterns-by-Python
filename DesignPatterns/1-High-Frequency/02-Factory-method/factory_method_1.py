@@ -12,7 +12,7 @@ class DataObject(metaclass=ABCMeta):
         return FileDataObject()
 
     @abstractmethod
-    def read_data_object(self, num: int) -> None:
+    def read_data_object(self, num: int) -> str:
         # read_data_objectは抽象メソッドで、
         # 実際の処理は子メソッドで実装したものが実行される
         pass
@@ -23,7 +23,7 @@ class FileDataObject(DataObject):
     def __init__(self) -> None:
         self.data_list: list = list()
 
-        with open('test.txt', 'r') as f:
+        with open('test.csv', 'r') as f:
             for line in f:
                 self.data_list.append(line)
 

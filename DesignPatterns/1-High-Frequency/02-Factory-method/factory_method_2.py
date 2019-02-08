@@ -1,80 +1,86 @@
 #! /usr/bin/env python3
 from abc import ABCMeta, abstractmethod
-from enum import Enum
+from enum import Enum, auto
+from typing import List
 
 
-class Object(Enum):
-    STANDALONE = 0
-    NETWORKING = 1
+# パターン1はファイルからDBへ切り替えが予定されていることが分かっている場合の設計で
+# クライアント側のコードに影響を与えないことを大切にしている
+# パターン2ではクライアント側からどのクラスを呼び出すか切り替えられる設計を目指す
 
 
-class DataObjectFactory:
-    # 戻り値となるクラスを DataObject クラスを継承しているものと入れ替えれば
-    # Client クラス側は DataObject.create() を呼び出すだけでよく、変更後の影響範囲は少ない
-
-    @staticmethod
-    def create(data_type):
-        if data_type == Object.STANDALONE:
-            return FileDataObject()
-        elif data_type == Object.NETWORKING:
-            return DbDataObject()
+class DBMode(Enum):
+    STANDALONE: int = auto()  # ファイルからの読み書き
+    NETWORKING: int = auto()  # DB からの読み書き
 
 
 class DataObject(metaclass=ABCMeta):
+
+    def __init__(self) -> None:
+        pass
+
     @abstractmethod
-    def read_data_object(self, num):
+    def fetch_user(self, id_num: int) -> str:
         pass
 
 
 class FileDataObject(DataObject):
 
-    def __init__(self):
-        self.data_list = list()
+    def __init__(self) -> None:
+        super().__init__()
+        self.data_list: List[str] = list()
 
         with open('test.csv', 'r') as f:
             for line in f:
                 self.data_list.append(line)
 
-    def read_data_object(self, row_num):
-        return self.data_list[row_num]
+    def fetch_user(self, id_num) -> str:
+        return self.data_list[id_num]
 
 
-class DbDataObject(DataObject):
+class DBDataObject(DataObject):
     """未実装クラスだが、将来的に FileDataObject と差し替える予定"""
 
-    def __init__(self):
+    def __init__(self) -> None:
         # DBへの接続手続きなど
+        super().__init__()
+
+    def fetch_user(self, id_num: int) -> str:
         pass
 
-    def read_data_object(self, id_num):
-        pass
+
+class DataObjectFactory:
+    # オブジェクト生成の責任を負う
+    # create 時にどのクラスを呼び出すか1度決めてしまえば、以後は毎回クラスを指定する必要がなくなる
+
+    def __init__(self, db_mode: Enum):
+        self.db_mode: Enum = db_mode
+
+    def create(self):
+        if self.db_mode == DBMode.STANDALONE:
+            return FileDataObject()
+        if self.db_mode == DBMode.NETWORKING:
+            return DBDataObject()
 
 
 class Client:
 
-    def __init__(self):
-        self.factory = DataObjectFactory.create(Object.STANDALONE)
-
-    def operating(self, num):
-        # DataObject.create() で FileDataObject を呼び出しているため
-        # 呼び出し元のクラスは FileDataObject から別のクラスへ容易に変更ができる
-        # つまり、 Client クラスはFileDataObject の存在を知らなくても FileDataObject を利用できる
-        # コーディングする時は DataObject.create() を呼び出すだけなので Client クラス側には変更の影響が少なくなる
-        person = self.factory.read_data_object(num)
-        return person
+    def __init__(self) -> None:
+        # ここで DbMode を指定する
+        self.data_object: DataObject = DataObjectFactory(DBMode.STANDALONE).create()
 
 
 if __name__ == '__main__':
-    client = Client()
+    client: DataObject = Client().data_object
 
-    i = 0
+    i: int = 0
     while True:
         try:
-            print(client.operating(i), end="")
+            print(client.fetch_user(i), end="")
             i += 1
         except IndexError:
             break
 
-    row = client.operating(1)
+    row: str = client.fetch_user(2)
     print("\n")
     print(row)
