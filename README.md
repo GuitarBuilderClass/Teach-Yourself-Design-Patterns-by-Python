@@ -15,8 +15,16 @@ Ch. 3 Singleton
 - [適用後](https://github.com/GuitarBuilderClass/Teach-Yourself-Design-Patterns-by-Python/blob/master/Part2/3_1_singleton.py)
 
 Ch. 4 Factory Method
+- [適用前](https://github.com/GuitarBuilderClass/Teach-Yourself-Design-Patterns-by-Python/blob/master/DesignPatterns/1-High-Frequency/02-Factory-method/useless_factory_method.py)
+
+- 適用後
+  - [その1](https://github.com/GuitarBuilderClass/Teach-Yourself-Design-Patterns-by-Python/blob/master/DesignPatterns/1-High-Frequency/02-Factory-method/factory_method_1.py): 変更したいクラスを親クラスで指定する
+  - [その2](https://github.com/GuitarBuilderClass/Teach-Yourself-Design-Patterns-by-Python/blob/master/DesignPatterns/1-High-Frequency/02-Factory-method/factory_method_2.py): クライアント側から利用クラスを指定する
+  - [その3](https://github.com/GuitarBuilderClass/Teach-Yourself-Design-Patterns-by-Python/blob/master/DesignPatterns/1-High-Frequency/02-Factory-method/factory_method_3.py): 抽象化したクラスにオブジェクト生成の責任を負わせる設計
 
 Ch. 5 Abstract Factory
+- [適用前](https://github.com/GuitarBuilderClass/Teach-Yourself-Design-Patterns-by-Python/blob/master/DesignPatterns/1-High-Frequency/03-Abstract-Factory/useless_abstract_factory.py)
+- [適用後]()
 
 Ch. 6 Template Method
 
