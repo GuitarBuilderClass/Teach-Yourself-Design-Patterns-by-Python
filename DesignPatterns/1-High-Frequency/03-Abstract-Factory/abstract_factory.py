@@ -121,12 +121,12 @@ class Order(GuitarFactory):
 
 if __name__ == '__main__':
     # ギターの種類を Order クラスの責任で指定
-    guitar = GuitarType.Telecaster
-    order = Order(guitar)
+    guitar: GuitarType = GuitarType.Telecaster
+    order: Order = Order(guitar)
 
-    neck = order.neck.feature()
-    fingerboard = order.fingerboard.feature()
-    body = order.body.feature()
+    neck: str = order.neck.feature()
+    fingerboard: str = order.fingerboard.feature()
+    body: str = order.body.feature()
     print(f"{guitar.name}のネックは{neck}、" +
           f"フィンガーボードは{fingerboard}、" +
           f"ボディは{body}でできています。")
