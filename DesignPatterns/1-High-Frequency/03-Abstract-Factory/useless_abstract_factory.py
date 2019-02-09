@@ -8,7 +8,7 @@ class GuitarType(Enum):
     LesPaul: int = auto()
 
 
-#Telecaster の材をクラス化する
+# Telecaster の材をクラス化する
 class TelecasterNeck:
 
     def feature(self) -> str:
@@ -95,6 +95,7 @@ class Order:
             fingerboard = factory.choice_les_paul_fingerboard()
             body = factory.choice_les_paul_body()
 
+        # return で早めに返したいが、共通部分を括りたい気持ちも強い
         use_neck: str = neck.feature()
         use_fingerboard: str = fingerboard.feature()
         use_body: str = body.feature()
