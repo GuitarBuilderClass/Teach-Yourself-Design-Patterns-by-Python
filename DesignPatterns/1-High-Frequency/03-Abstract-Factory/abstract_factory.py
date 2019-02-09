@@ -107,9 +107,9 @@ class Order(GuitarFactory):
         elif factory == GuitarType.LesPaul:
             factory = LesPaulFactory()
 
-        self.neck: Union[TelecasterFactory, LesPaulFactory]
-        self.fingerboard: Union[TelecasterFactory, LesPaulFactory]
-        self.body: Union[TelecasterFactory, LesPaulFactory]
+        self.neck: Union[TelecasterNeck, LesPaulNeck]
+        self.fingerboard: Union[TelecasterFingerboard, LesPaulFingerboard]
+        self.body: Union[TelecasterBody, LesPaulBody]
 
         self.neck = factory.choice_neck()
         self.fingerboard = factory.choice_fingerboard()
